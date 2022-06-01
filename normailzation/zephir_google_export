@@ -1,0 +1,173 @@
+rule "update 974 field"
+priority 100
+when
+  (true)
+then
+  # clean up the leader
+  replaceControlContents "LDR.{0,5}" with "00000"
+  replaceControlContents "LDR.{5,1}.d" with "c"
+  replaceControlContents "LDR.{9,8}" with "a2200000"
+  replaceControlContents "LDR.{20,4}" with "4500"
+  # remove unnecessary fields (9xx)
+  removeField "856"
+  removeField "90*"
+  removeField "91*"
+  removeField "92*"
+  removeField "93*"
+  removeField "94*"
+  removeField "95*"
+
+  # all the 96* except 966
+  removeField "960"
+  removeField "961"
+  removeField "962"
+  removeField "963"
+  removeField "964"
+  removeField "965"
+  # keep 966
+  removeField "967"
+  removeField "968"
+  removeField "969"
+
+  # all the 97* except 974
+  removeField "970"
+  removeField "971"
+  removeField "972"
+  removeField "973"
+  # keep 974
+  removeField "975"
+  removeField "976"
+  removeField "977"
+  removeField "978"
+  removeField "979"
+
+  removeField "98*"
+  removeField "99*"
+  # vestigial fields from Aleph
+  removeField "CNV"
+
+  # copy 974 field to 899 for furthur processing for google
+  copyField "974" to "899"
+
+  # remove subfields i and g (added for google 899)
+  removeSubField "974.i"
+  removeSubField "974.g"
+
+  # reformat 035 with aleph sysnum to zephir requested format
+  # 035$z (MiU)Aleph#########
+  replaceContents "035.a.(MiU)" with "(MiU)Aleph"
+  replaceContents "035.a.MIU01" with ""
+  changeSubField "035.a" to "z" if (exists "035.a.(MiU)Aleph*")
+
+  # reformat 035 with aleph sysnum to google requested format
+  copyField "035.z" to "035.a" if (exists "035.z.(MiU)Aleph*")
+  replaceContents "035.a.(MiU)Aleph" with "(MiU)MIU01000000000000"
+  suffix "035.a" with "-goog" if (exists "035.a.(MiU)MIU01000000000000*")
+  changeSubField "035.a" to "z" if (exists "035.a.(MiU)MIU01000000000000*")
+
+  # reformat 974 field
+
+  # digitization source
+  addSubField "974.s.google" if (not exists "974.s")
+  replaceContents "974.s.*" with "google" if (exists "974.s.M*")
+  replaceContents "974.s.*" with "lit-dlps-dc" if (exists "974.s.D*")
+  replaceContents "974.s.*" with "lit-dlps-dc" if (exists "974.a.MIU*")
+  replaceContents "974.s.*" with "lit-dlps-dc" if (exists "974.b.miu*")
+  replaceContents "974.s.*" with "ump" if (exists "974.s.UMP*")
+  replaceContents "974.s.*" with "bentley-umich" if (exists "974.s.UMICH-BENT*")
+  replaceContents "974.s.*" with "clements-umich" if (exists "974.s.UMICH-CLEM*")
+  replaceContents "974.s.*" with "umich" if (exists "974.s.UMICH")
+  replaceContents "974.s.*" with "private" if (exists "974.s.PRIVATE")
+  replaceContents "974.s.*" with "um-dc-mp" if (exists "974.s.UMDCMP")
+  replaceContents "974.s.*" with "brooklynmuseum" if (exists "974.s.BROOKLYN")
+
+  # collection
+  # 974 d is Library, c is collection
+  # if Library is not SDR, then set collection to MIU
+  replaceContents "974.c.*" with "MIU" if (not exists "974.d.SDR")
+  # if Library is SDR then map PRIV->UMPRIVATE, DCMP->UMDCMP, otherwise leave as is (could be GWLA, UMBUS, UMDB, or UMLAW)
+  replaceContents "974.c.*" with "UMPRIVATE" if (exists "974.c.PRIV")
+  replaceContents "974.c.*" with "UMDCMP" if (exists "974.c.DCMP")
+  # if Library is SDR and collection is EO, set collection to MIU
+  replaceContents "974.c.*" with "MIU" if (exists "974.c.EO")
+
+  removeSubField "974.d"
+
+end
+
+rule "974 barcode from HT id"
+priority 50
+when 
+  (exists "974.b")
+then
+  removeSubField "974.a"
+  replaceContents "974.b. *" with ""
+  replaceSubFieldContents "899.a" with "974.b"
+  replaceContents "974.b.miua\\\\." with ""
+  replaceContents "974.b.miun\\\\." with ""
+  replaceContents "974.b.mdp\\\\." with ""
+end
+
+rule "974 barcode from barcode"
+priority 40
+when
+  (not exists "974.b")
+then
+  changeSubField "974.a" to "b"
+  replaceContents "974.b.A" with "a"
+  replaceContents "974.b.B" with "b"
+  replaceContents "974.b.C" with "c"
+  replaceContents "974.b.D" with "d"
+  replaceContents "974.b.E" with "e"
+  replaceContents "974.b.F" with "f"
+  replaceContents "974.b.G" with "g"
+  replaceContents "974.b.H" with "h"
+  replaceContents "974.b.I" with "i"
+  replaceContents "974.b.J" with "j"
+  replaceContents "974.b.K" with "k"
+  replaceContents "974.b.L" with "l"
+  replaceContents "974.b.M" with "m"
+  replaceContents "974.b.N" with "n"
+  replaceContents "974.b.O" with "o"
+  replaceContents "974.b.P" with "p"
+  replaceContents "974.b.Q" with "q"
+  replaceContents "974.b.R" with "r"
+  replaceContents "974.b.S" with "s"
+  replaceContents "974.b.T" with "t"
+  replaceContents "974.b.U" with "u"
+  replaceContents "974.b.V" with "v"
+  replaceContents "974.b.W" with "w"
+  replaceContents "974.b.X" with "x"
+  replaceContents "974.b.Y" with "y"
+  replaceContents "974.b.Z" with "z"
+  replaceSubFieldContents "899.a" with "974.b"
+  replaceContents "974.b.miua\\\\." with ""
+  replaceContents "974.b.miun\\\\." with ""
+  replaceContents "974.b.mdp\\\\." with ""
+end
+  
+rule "change 974 to 955"
+priority 10
+when
+  (true)
+then
+  removeSubField "974.g"
+  removeSubField "974.i"
+  removeSubField "974.7"
+  changeField "974" to "955"
+
+  # reformat 899 field
+  removeSubField "899.7"
+  removeSubField "899.s"
+  removeSubField "899.b"
+  changeSubField "899.i" to "b"
+  removeSubField "899.c"
+  changeSubField "899.v" to "c"
+  removeSubField "899.d"
+  removeSubField "899.g" if (not exists "899.g.rtl")
+  replaceContents "899.g.rtl" with "scanningOrder=right-to-left,readingOrder=right-to-left,coverTag=follows-reading-order"
+  replaceContents "899.a.mdp\\\\." with ""
+  changeField "899" to "DLP" if (exists "899.a.miu*")
+  replaceContents "DLP.a.miua\\\\." with ""
+  replaceContents "DLP.a.miun\\\\." with ""
+end
