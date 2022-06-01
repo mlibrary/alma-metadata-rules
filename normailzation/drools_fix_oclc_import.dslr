@@ -1,0 +1,48 @@
+rule "Clean up oclc record for import"
+priority 10
+when
+      (TRUE)
+then
+    replaceControlContents "LDR.{17,1}.E" with "u"
+    replaceControlContents "LDR.{17,1}.I" with "#"
+    replaceControlContents "LDR.{17,1}.J" with "u"
+    replaceControlContents "LDR.{17,1}.K" with "7"
+    replaceControlContents "LDR.{17,1}.L" with "1"
+    replaceControlContents "LDR.{17,1}.M" with "7"
+    replaceControlContents "LDR.{17,1}.W" with "u"
+    removeField "012"
+    removeField "019"
+    removeField "029"
+    removeField "092"
+    removeField "263"
+    removeField "265"
+    removeField "350"
+    removeField "540"
+    removeField "583"
+    removeField "592"
+    removeField "599"
+    removeField "850"
+    removeField "851"
+    removeField "853"
+    removeField "854"
+    removeField "855"
+    removeField "856" if (exists "856.{4,2}")
+    removeField "857"
+    removeField "858"
+    removeField "859"
+    removeField "86*"
+    removeField "87*"
+    removeField "890"
+    removeField "891"
+    removeField "994"
+    removeField "948"
+    changeSubField "949.u" to "c"
+end
+
+rule "change 949 to 998"
+priority 5
+when
+    (TRUE)
+then
+  changeField "949" to "998"
+end
