@@ -1,0 +1,19 @@
+rule "not preferred + 035"
+when
+   not preferred
+then
+   add to text displayValue
+   add to text " | "
+   add to text preferredDisplay
+   add to text " | "
+   add to text from onlyfirst "035.a" if (exists "035.a")
+end
+
+rule "preferred + 035"
+when
+   preferred
+then
+   add to text displayValue
+   add to text " | "
+   add to text from onlyfirst "035.a" if (exists "035.a")
+end
