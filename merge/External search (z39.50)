@@ -1,0 +1,35 @@
+rule "Merge for searching external resources"
+# Primary record is the external record
+when
+  merge
+then
+  replace MARC."001"
+  add MARC."035" when MARC."035"."a" contains "MIU01"
+  add MARC."035" when MARC."035"."a" contains "RLIN"
+  add MARC."035" when MARC."035"."a" contains "CaOTULAS"
+  add MARC."035" when MARC."035"."a" contains "SAZTEC"
+  add MARC."035" when MARC."035"."a" contains "III"
+  add MARC."533"
+  replace MARC."540"
+  add MARC."501"
+  add MARC."590"
+  replace MARC."690"
+  replace MARC."691"
+  replace MARC."696"
+  replace MARC."697"
+  replace MARC."698"
+  replace MARC."699"
+  replace MARC."856"
+  remove MARC."9"XX
+  add MARC."914"
+  add MARC."929"
+  add MARC."937"
+  add MARC."949"
+  add MARC."958"
+  add MARC."959"
+  add MARC."966"
+  add MARC."980"
+  add MARC."981"
+  add MARC."997"
+  add MARC."998"
+end
